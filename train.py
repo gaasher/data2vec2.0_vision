@@ -118,8 +118,6 @@ class data2vec(pl.LightningModule):
         return encoder(x)
     
     def training_step(self, batch, batch_idx):
-        update_momentum(self.student, self.teacher, self.m)
-
         x = batch
 
         y_teacher = self(x, self.teacher) #get teacher embedding
@@ -142,6 +140,10 @@ class data2vec(pl.LightningModule):
     
     def predict_step(self, batch, batch_idx, dataloader_idx):
         return self(batch, self.teacher) #just get teacher embedding
+    
+    def on_after_backward(self):
+        update_momentum(self.student, self.teacher, self.m)
+
     
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.lr)
