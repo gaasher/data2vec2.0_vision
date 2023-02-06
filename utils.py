@@ -14,5 +14,7 @@ def update_momentum(model: nn.Module, model_ema: nn.Module, m: float): #taken fr
         >>> update_momentum(moco, moco_momentum, m=0.999)
         >>> update_momentum(projection_head, projection_head_momentum, m=0.999)
     """
+    model.eval()
+    model_ema.eval()
     for model_ema, model in zip(model_ema.parameters(), model.parameters()):
         model_ema.data = model_ema.data * m + model.data * (1. - m)
